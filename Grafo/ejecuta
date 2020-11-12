@@ -1,0 +1,4 @@
+#!/bin/sh
+
+g++ main.cpp -o main
+cat orden.txt | ./main
