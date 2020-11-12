@@ -6,6 +6,13 @@
 
 using namespace std;
 
+//GLOBAL VAR:
+	int CICLOS_MAX_SIN_MEJORAS;
+	int MAX_CANT_ITERACIONES;
+	int CANT_INTENTOS;
+	int CANT_TOPS;
+	int CANT_NODOS_A_ELEJIR;
+
 class grafo {
 
 public:
@@ -101,6 +108,78 @@ void maximoImpacto(grafo G, grafo H) {
     for (int i = 0; i < colores.size(); ++i) {
         cout << colores[i] << ", ";
     }
+
+}
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+//--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto){
+	int n= G.cantDeNodos();
+	vector<int> todos_los_nodos(n,0);
+	//lleno todos_los_nodos con la pos i = i
+	for(int i = 0 ; i < n ; i++){
+		todos_los_nodos[i] = i+1;
+	}
+	vector<pair<int,int>> memoria;
+	int cant_iteraciones = 0;
+	int ciclos_sin_mejoras = 0;
+	int intentos = 0;
+	bool noHayOpciones = true;
+	int mejorSol = impacto;
+	vector<int> mejorColoreo = coloreo;
+	while(ciclos_sin_mejoras < CICLOS_MAX_SIN_MEJORAS && cant_iteraciones < MAX_CANT_ITERACIONES ){//faltaria agregar el tiempo (nosPasamosDeTiempo)
+		vector<int> nodos_no_visitados = shuffle(todos_los_nodos.begin(),todos_los_nodos.end());
+		intentos = 0;
+		while(noHayOpciones && intentos < CANT_INTENTOS ){
+			noHayOpciones = true;
+			//Busco nodos a los cuales hacerles swap
+			arregloDeAdyacentes = generarPosiblesSwapeos(nodos_no_visitados,CANT_NODOS_A_ELEJIR);
+			//Descarto posibles swap que estan en la lista taboo o no sean validas
+			sacarInvalidas(arregloDeAdyacentes,NECESITA UN GRAFO?);//sacarInvalidas saca los coloreos invalidos
+			filtrar(arregloDeAdyacentes,memoria);
+			if(arregloDeAdyacentes.size() == 0){
+				borrar(nodos_no_visitados,0,CANT_NODOS_A_ELEJIR);
+				intentos++;
+			}
+			else
+				noHayOpciones = false;
+		}
+		//Evaluo la funcion objetivo para ver si hay mejoras o no
+		bool cambie = false;
+		vector<int> coloreoAuxiliar;
+		pair<int,int> intercambio;
+		for(pair<int,int> swapeo: arregloDeAdyacentes){
+			coloreoAuxiliar = coloreo;
+			hacerSwap(coloreoAuxiliar,swapeo);
+			//impact se fija asi nomas el maximo impacto suponiendo que el coloreo ya es valido
+			int impactoAuxiliar =impact(coloreoAuxiliar,G?,H?);
+			if(impactoAuxiliar > mejorSol){
+				pair<int,int> intercambio = swapeo;
+				mejorSol = impactoAuxiliar;
+				mejorColoreo = coloreoAuxiliar;
+				cambie = true;
+			}
+		}
+		if(!cambie){
+			ciclos_sin_mejoras++;
+			coloreo = hacerSwap(colores,arregloDeAdyacentes[0]);
+			memoria.pushback(arregloDeAdyacentes[0]);
+		}
+		else{
+			memoria.pushback(intercambio);
+			ciclos_sin_mejoras = 0;
+		}
+		cant_iteraciones++;
+	}
+
+
+		cout<<mejorSol <<endl;
+		cout << mejorColoreo << endl;
 
 }
 
