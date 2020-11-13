@@ -118,6 +118,55 @@ void maximoImpacto(grafo G, grafo H) {
 //--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
 //--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
 //--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
+
+/*
+Funciones a implementar yet:
+
+-generarPosiblesSwapeos
+-sacarInvalidas AGUS&TIN 
+-filtrar AGUS&TIN  
+-borrarElementos DONE 
+-hacerSwap DONE 
+-impacto AGUS&TIN 
+*/
+
+void hacerSwap(vector<int> &coloreoAuxiliar,const &pair<int,int> swapeo){
+	int aux = coloreoAuxiliar[swapeo.first - 1 ];  
+	coloreoAuxiliar[swapeo.first - 1 ] = coloreoAuxiliar[swapeo.second - 1 ];
+	coloreoAuxiliar[swapeo.second - 1 ] = aux;
+}
+
+void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar){
+	while(cant_a_borrar > 0){
+		nodos_no_visitados.erase(nodos_no_visitados.begin()); //Borro el primer elemento
+		cant_a_borrar--;
+	}
+}
+vector<pair<int,int>> generarPosiblesSwapeos(const &grafo G, const vector<int> todos_los_nodos, int cant_nodos){
+	vector<pair<int,int>> swaps; 
+	vector<vector<int>> adyacencias = G.listaAdyacencia();
+	for(int i = 0 ; i < cant_nodos; i++){
+		for(int j = 0; j < adyacencias[i]; j++){
+			pair<int,int> par = make_pair(todos_los_nodos[i], adyacencias[todos_los_nodos[i]][j]);
+			swaps.pushback(par);
+		}
+	}
+	return swaps; 
+}
+
+vector<pair<int,int>> generarPosiblesSwapeos(const &grafo G, const vector<int> todos_los_nodos, int cant_nodos){
+	vector<pair<int,int>> swaps; 
+	vector<vector<int>> adyacencias = G.listaAdyacencia();
+	for(int i = 0 ; i < cant_nodos; i++){
+		for(int j = 0; j < adyacencias[i]; j++){
+			pair<int,int> par = make_pair(todos_los_nodos[i], adyacencias[todos_los_nodos[i]][j]);
+			swaps.pushback(par);
+		}
+	}
+
+
+}
+
 void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto){
 	int n= G.cantDeNodos();
 	vector<int> todos_los_nodos(n,0);
@@ -138,12 +187,12 @@ void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto){
 		while(noHayOpciones && intentos < CANT_INTENTOS ){
 			noHayOpciones = true;
 			//Busco nodos a los cuales hacerles swap
-			arregloDeAdyacentes = generarPosiblesSwapeos(nodos_no_visitados,CANT_NODOS_A_ELEJIR);
+			arregloDeAdyacentes = generarPosiblesSwapeos(&G,&nodos_no_visitados,CANT_NODOS_A_ELEJIR);
 			//Descarto posibles swap que estan en la lista taboo o no sean validas
 			sacarInvalidas(arregloDeAdyacentes,NECESITA UN GRAFO?);//sacarInvalidas saca los coloreos invalidos
 			filtrar(arregloDeAdyacentes,memoria);
 			if(arregloDeAdyacentes.size() == 0){
-				borrar(nodos_no_visitados,0,CANT_NODOS_A_ELEJIR);
+				borrarElementos(nodos_no_visitados,CANT_NODOS_A_ELEJIR);
 				intentos++;
 			}
 			else
@@ -157,7 +206,7 @@ void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto){
 			coloreoAuxiliar = coloreo;
 			hacerSwap(coloreoAuxiliar,swapeo);
 			//impact se fija asi nomas el maximo impacto suponiendo que el coloreo ya es valido
-			int impactoAuxiliar =impact(coloreoAuxiliar,G?,H?);
+			int impactoAuxiliar =impacto(H,coloreoAuxiliar);
 			if(impactoAuxiliar > mejorSol){
 				pair<int,int> intercambio = swapeo;
 				mejorSol = impactoAuxiliar;
@@ -176,8 +225,6 @@ void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto){
 		}
 		cant_iteraciones++;
 	}
-
-
 		cout<<mejorSol <<endl;
 		cout << mejorColoreo << endl;
 
