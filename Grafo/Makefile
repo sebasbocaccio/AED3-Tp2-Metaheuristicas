@@ -14,7 +14,7 @@ EXES = \
 ${EXE_DIR}/%: %.o
 	${CC} -o $@ $< ${LIBS}
 
-%.o: ${SRC_DIR}/%.cpp
+%.o: ${SRC_DIR}.cpp
 	${CC} -o $@ -c $<
 
 all:    ${EXES}
