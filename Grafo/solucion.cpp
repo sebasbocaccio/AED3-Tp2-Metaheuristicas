@@ -1,7 +1,18 @@
 #include "solucion.h"
 
 
-
+int impacto(grafo H, vector<int> coloreo){
+    vector<vector<int>> listaDeAdyacencia = H.listaAdyacencia();
+    int impacto = 0;
+    for (int i = 0; i < listaDeAdyacencia.size(); ++i) {
+        for (int j = 0; j < listaDeAdyacencia[i].size(); ++j) {
+            if(coloreo[i] == coloreo[listaDeAdyacencia[i][j]]){
+                impacto++;
+            }
+        }
+    }
+    return impacto / 2;
+}
 
 
 void printSol(vector<int> solucion, grafo H){
@@ -65,12 +76,12 @@ vector<int> maximoImpacto(grafo G, grafo H) {
 }
 
 vector<pair<int, int>> vecindad(int n) {
-
     vector<int> v(n);
     iota(v.begin(), v.end(), 1);
     vector<pair<int, int>> swaps;
-    const double &cota = (double) (n * (n - 1) / 2) * 0.2;
+    const double &cota = (double) (n * (n - 1) / 2) * 0.3;
     double cantIt = 0;
+    shuffle(v.begin(), v.end(), std::mt19937(std::random_device()()));
     for (int i = 0; i < n && cantIt < cota; i++) {
         for (int j = i + 1; j < n && cantIt < cota; ++j) {
             swaps.emplace_back(v[i], v[j]);
@@ -127,12 +138,13 @@ void filtrarTabu(vector<vector<int>> tabuList, vector<pair<int, int>>& vecinos, 
         vector<int> posibleColoreo = coloreoActual;
         posibleColoreo[vecinos[i].first] = coloreoActual[vecinos[i].second];
         posibleColoreo[vecinos[i].second] = coloreoActual[vecinos[i].first];
-
         if(std::find(tabuList.begin(), tabuList.end(), posibleColoreo) != tabuList.end()) {
             vecinos.erase(vecinos.begin() + i);
         }
     }
 }
+
+
 
 vector<int> tabuSearch_allColors(grafo G, grafo H) {
     vector<vector<int>> tabuList;
@@ -149,8 +161,9 @@ vector<int> tabuSearch_allColors(grafo G, grafo H) {
         filtrarTabu(tabuList, vecinos, coloreoActual);
         vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H);
         tabuList.push_back(maximo);
-        if(maximo> optimoActual){
+        if(maximo > optimoActual){
             optimoActual = maximo;
+            cantSinSol = 0;
         } else{
             cantSinSol++;
         }
