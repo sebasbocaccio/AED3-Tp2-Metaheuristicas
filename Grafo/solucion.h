@@ -22,7 +22,7 @@ public:
 
     int grado(const int &nodo) { return relaciones[nodo].size(); }
 
-    vector<vector<int>> listaAdyacencia() { return relaciones; }
+    vector<vector<int>> listaAdyacencia() const { return relaciones; }
 
 
     grafo(int nodos, int aristas) : _cantNodos(nodos), _cantAristas(aristas) {
@@ -56,6 +56,19 @@ private:
     std::vector<std::vector<int>> relaciones;
 };
 
+//GLOBAL VAR:
+int CICLOS_MAX_SIN_MEJORAS;
+int MAX_CANT_ITERACIONES;
+int CANT_INTENTOS;
+int CANT_TOPS;
+int CANT_NODOS_A_ELEJIR;
+
+
+
+void hacerSwap(vector<int> &coloreoAuxiliar,const pair<int,int>& swapeo);
+void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar);
+vector<pair<int,int>> generarPosiblesSwapeos(const grafo& G, const vector<int> todos_los_nodos, int cant_nodos);
+void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto);
 
 
 int impacto(grafo H, vector<int> coloreo);
