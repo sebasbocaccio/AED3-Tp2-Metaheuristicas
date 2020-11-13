@@ -61,7 +61,7 @@ private:
 int impacto(grafo H, vector<int> coloreo);
 void printSol(grafo H, vector<int> solucion);
 bool colorValido(grafo G, vector<int> colores, int nodo, int color);
-vector<int> maximoImpacto(grafo G, grafo H);
+vector<int> heuristica_1(grafo G, grafo H);
 vector<pair<int, int>> vecindad(int n);
 bool estadoValido(grafo &G, const vector<int> &colores);
 void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int> &coloreoActual);

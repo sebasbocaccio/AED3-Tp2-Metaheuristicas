@@ -2,8 +2,6 @@
 
 
 
-
-
 int main() {
     int cant_vertices = 0;
     int cant_aristas_G = 0;
@@ -13,6 +11,7 @@ int main() {
     std::cin >> cant_aristas_H;
     grafo G = grafo(cant_vertices, cant_aristas_G);
     grafo H = grafo(cant_vertices, cant_aristas_H);
-    maximoImpacto(G, H);
+    //heuristica_1(G, H);
+    tabuSearch_allColors(G, H);
     return 0;
 }

@@ -1,41 +1,8 @@
 #include "solucion.h"
 
 
-int impacto(grafo H, vector<int> coloreo){
-    vector<vector<int>> listaDeAdyacencia = H.listaAdyacencia();
-    int impacto = 0;
-    for (int i = 0; i < listaDeAdyacencia.size(); ++i) {
-        for (int j = 0; j < listaDeAdyacencia[i].size(); ++j) {
-            if(coloreo[i] == coloreo[listaDeAdyacencia[i][j]]){
-                impacto++;
-            }
-        }
-    }
-    return impacto / 2;
-}
 
-
-void printSol(vector<int> solucion, grafo H){
-    cout << impacto(H, solucion) << endl;
-    for (int i = 0; i < solucion.size(); ++i) {
-        cout << solucion[i] << ", ";
-    }
-}
-
-bool colorValido(grafo G, vector<int> colores, int nodo, int color) {
-    vector<int> listaAdyacencia = G.listaAdyacencia()[nodo];
-    if (colores[nodo] != -1) {
-        return false;
-    }
-    for (int i = 0; i < listaAdyacencia.size(); ++i) {
-        if (colores[listaAdyacencia[i]] == color)
-            return false;
-    }
-    return true;
-}
-
-
-vector<int> maximoImpacto(grafo G, grafo H) {
+vector<int> heuristica_1(grafo G, grafo H) {
     vector<int> colores(H.cantDeNodos(), -1);    // colores de cada nodo, -1 si no esta coloreado
     vector<pair<int, int>> grados;
     // ordeno los vertices por grado
@@ -43,9 +10,7 @@ vector<int> maximoImpacto(grafo G, grafo H) {
         grados.push_back(make_pair(H.grado(i), i));
     }
     sort(grados.begin(), grados.end());
-
     // posible optimizacion con priorida de colores
-
     for (int i = H.cantDeNodos() - 1; i >= 0; --i) {
         if (colores[grados[i].second] == -1) {   // me fijo si i ya esta coloreado
             colores[grados[i].second] = i;
@@ -74,6 +39,46 @@ vector<int> maximoImpacto(grafo G, grafo H) {
     return colores;
 
 }
+
+
+
+
+int impacto(grafo H, vector<int> coloreo){
+    vector<vector<int>> listaDeAdyacencia = H.listaAdyacencia();
+    int impacto = 0;
+    for (int i = 0; i < listaDeAdyacencia.size(); ++i) {
+        for (int j = 0; j < listaDeAdyacencia[i].size(); ++j) {
+            if(coloreo[i] == coloreo[listaDeAdyacencia[i][j]]){
+                impacto++;
+            }
+        }
+    }
+    return impacto / 2;
+}
+
+
+void printSol(vector<int> solucion, grafo H){
+    cout << impacto(H, solucion) << endl;
+    for (int i = 0; i < solucion.size(); ++i) {
+        cout << solucion[i] << ", ";
+    }
+
+}
+
+bool colorValido(grafo G, vector<int> colores, int nodo, int color) {
+    vector<int> listaAdyacencia = G.listaAdyacencia()[nodo];
+    if (colores[nodo] != -1) {
+        return false;
+    }
+    for (int i = 0; i < listaAdyacencia.size(); ++i) {
+        if (colores[listaAdyacencia[i]] == color)
+            return false;
+    }
+    return true;
+}
+
+
+
 
 vector<pair<int, int>> vecindad(int n) {
     vector<int> v(n);
@@ -148,7 +153,7 @@ void filtrarTabu(vector<vector<int>> tabuList, vector<pair<int, int>>& vecinos, 
 
 vector<int> tabuSearch_allColors(grafo G, grafo H) {
     vector<vector<int>> tabuList;
-    vector<int> coloreoActual = maximoImpacto(G, H);
+    vector<int> coloreoActual = heuristica_1(G, H);
     tabuList.push_back(coloreoActual);
     int cantSinSol = 0;
 //    vector<int> v(G.cantDeNodos());
@@ -168,7 +173,6 @@ vector<int> tabuSearch_allColors(grafo G, grafo H) {
             cantSinSol++;
         }
     }
-
     printSol(H, optimoActual);
     return optimoActual;
 }
