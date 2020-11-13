@@ -1,0 +1,4 @@
+/snap/clion/129/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/home/martin/Documents/Algo 3/TP2_Algo3/tp2-aed3-dc-uba/Grafo"
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/martin/Documents/Algo 3/TP2_Algo3/tp2-aed3-dc-uba/Grafo/cmake-build-debug

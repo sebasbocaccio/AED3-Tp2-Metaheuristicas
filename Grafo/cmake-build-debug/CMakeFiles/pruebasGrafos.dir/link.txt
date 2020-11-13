@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/pruebasGrafos.dir/main.cpp.o CMakeFiles/pruebasGrafos.dir/solucion.cpp.o  -o pruebasGrafos 
