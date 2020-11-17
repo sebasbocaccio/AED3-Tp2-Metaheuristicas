@@ -328,6 +328,7 @@ void tabu_search_vertices(grafo& G, grafo& H) {
             //Busca el swap mas optimo posible para cambiar coloreo. Si no hay uno mejor, lo cambia por un intercambio cualquiera.
             pair<int, int> intercambio;
             if(cambieOptimo(swapeosValidos,H,coloreo,mejorSol,intercambio)){
+                mejorColoreo = coloreo;
                 memoria.push_back(intercambio);
                 ciclos_sin_mejoras = 0;
             }
