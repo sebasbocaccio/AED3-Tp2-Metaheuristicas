@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sebasbocaccio/Desktop/Algo3/tp2-aed3-dc-uba/Grafo/solucion.cpp
+solucion.h
+/home/sebasbocaccio/Desktop/Algo3/tp2-aed3-dc-uba/Grafo/solucion.h
+
+/home/sebasbocaccio/Desktop/Algo3/tp2-aed3-dc-uba/Grafo/solucion.h
+iostream
+-
+list
+-
+random
+-
+vector
+-
+utility
+-
+algorithm
+-
+numeric
+-
+chrono
+-
+

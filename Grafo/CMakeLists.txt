@@ -3,4 +3,4 @@ project(pruebasGrafos)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(pruebasGrafos main.cpp solucion.cpp solucion.h)
+add_executable(main main.cpp solucion.cpp solucion.h)

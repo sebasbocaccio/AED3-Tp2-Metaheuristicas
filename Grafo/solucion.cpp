@@ -1,11 +1,11 @@
 
 #include "solucion.h"
 
-int CICLOS_MAX_SIN_MEJORAS = 1000;
+int CICLOS_MAX_SIN_MEJORAS = 10000;
 int MAX_CANT_ITERACIONES = 5000;
-int CANT_INTENTOS = 100;
-int CANT_TOPS = 3;
-int CANT_NODOS_A_ELEJIR = 3;
+int CANT_INTENTOS = 10000;
+int CANT_TOPS = 250;
+int CANT_NODOS_A_ELEJIR = 14;
 
 
 
@@ -125,6 +125,7 @@ bool estadoValido(grafo &G, const vector<int> &colores) {
 void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int> &coloreoActual) {
     for (int i = 0; i < vecinos.size(); i++) {
         vector<int> posibleColoreo = coloreoActual;
+
         posibleColoreo[vecinos[i].first] = coloreoActual[vecinos[i].second];
         posibleColoreo[vecinos[i].second] = coloreoActual[vecinos[i].first];
         if (!estadoValido(G, posibleColoreo)) {
@@ -229,7 +230,9 @@ vector<pair<int, int>> generarPosiblesSwapeos(const grafo &G, const vector<int> 
     vector<pair<int, int>> swaps;
     vector<vector<int>> adyacencias = G.listaAdyacencia();
     for (int i = 0; i < cant_nodos; i++) {
-        for (int j = 0; j < adyacencias[i].size(); j++) {
+        for (int j = 0; j < adyacencias[todos_los_nodos[i]].size(); j++) {
+            int first = todos_los_nodos[i];
+            int sec = adyacencias[todos_los_nodos[i]][j];
             pair<int, int> par = make_pair(todos_los_nodos[i], adyacencias[todos_los_nodos[i]][j]);
             swaps.push_back(par);
         }
@@ -313,14 +316,16 @@ void tabu_search_vertices(grafo& G, grafo& H) {
     while (ciclos_sin_mejoras < CICLOS_MAX_SIN_MEJORAS && cant_iteraciones < MAX_CANT_ITERACIONES) { //faltaria agregar el tiempo (nosPasamosDeTiempo)
 
         vector<int> nodos_no_visitados = todos_los_nodos;
-        shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::mt19937(std::random_device()()));
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+        shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::default_random_engine(seed));
         
         //Creo Swapeos, eliminando los que estan en la lista tabu y los que producen coloreos invalidos 
         vector<pair<int,int>> swapeosValidos = generarSwapeosValidos(nodos_no_visitados,G,memoria, coloreo);
 
         if(swapeosValidos.size() != 0){
  
-            //Busca el swap mas optimo posible para cambiar coloreo, si no hay uno mejor lo cambia por un intercambio cualquiera.
+            //Busca el swap mas optimo posible para cambiar coloreo. Si no hay uno mejor, lo cambia por un intercambio cualquiera.
             pair<int, int> intercambio;
             if(cambieOptimo(swapeosValidos,H,coloreo,mejorSol,intercambio)){
                 memoria.push_back(intercambio);
