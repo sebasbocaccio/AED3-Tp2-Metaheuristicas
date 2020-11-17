@@ -1,4 +1,12 @@
+
 #include "solucion.h"
+
+int CICLOS_MAX_SIN_MEJORAS;
+int MAX_CANT_ITERACIONES;
+int CANT_INTENTOS;
+int CANT_TOPS;
+int CANT_NODOS_A_ELEJIR;
+
 
 
 vector<int> heuristica_1(grafo G, grafo H) {
@@ -158,7 +166,7 @@ vector<int> tabuSearch_allColors(grafo G, grafo H) {
         //shuffle(v.begin(), v.endpai(), std::mt19937(std::random_device()()));
         vector<pair<int, int>> vecinos = vecindad(G.cantDeNodos());
         quitarInvalidos(vecinos, G, coloreoActual);
-        filtrarTabu(tabuList, vecinos, coloreoActual);
+        filtrarTabu_allColors(tabuList, vecinos, coloreoActual);
         vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H);
         tabuList.push_back(maximo);
         if (maximo > optimoActual) {
@@ -168,7 +176,7 @@ vector<int> tabuSearch_allColors(grafo G, grafo H) {
             cantSinSol++;
         }
     }
-    printSol(H, optimoActual);
+    printSol(optimoActual,H);
     return optimoActual;
 }
 
@@ -221,7 +229,7 @@ vector<pair<int, int>> generarPosiblesSwapeos(const grafo &G, const vector<int> 
 }
 
 
-void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto) {
+void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto_input) {
     int n = G.cantDeNodos();
     vector<int> todos_los_nodos(n, 0);
     //lleno todos_los_nodos con la pos i = i
@@ -233,7 +241,7 @@ void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto) {
     int ciclos_sin_mejoras = 0;
     int intentos = 0;
     bool noHayOpciones = true;
-    int mejorSol = impacto;
+    int mejorSol = impacto_input;
     vector<int> mejorColoreo = coloreo;
     while (ciclos_sin_mejoras < CICLOS_MAX_SIN_MEJORAS &&
            cant_iteraciones < MAX_CANT_ITERACIONES) {//faltaria agregar el tiempo (nosPasamosDeTiempo)
@@ -241,11 +249,11 @@ void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto) {
         vector<int> nodos_no_visitados = todos_los_nodos;
         shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::mt19937(std::random_device()()));
         intentos = 0;
+        vector<pair<int, int>> arregloDeAdyacentes;
         while (noHayOpciones && intentos < CANT_INTENTOS) {
             noHayOpciones = true;
             //Busco nodos a los cuales hacerles swap
-            vector<pair<int, int>> arregloDeAdyacentes = generarPosiblesSwapeos(G, nodos_no_visitados,
-                                                                                CANT_NODOS_A_ELEJIR);
+            arregloDeAdyacentes = generarPosiblesSwapeos(G, nodos_no_visitados, CANT_NODOS_A_ELEJIR);
             //Descarto posibles swap que estan en la lista taboo o no sean validas
             quitarInvalidos(arregloDeAdyacentes, G, coloreo);//sacarInvalidas saca los coloreos invalidos
             filtrarTabu_Vertices(memoria, arregloDeAdyacentes, coloreo);
@@ -259,7 +267,7 @@ void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto) {
         bool cambie = false;
         vector<int> coloreoAuxiliar;
         pair<int, int> intercambio;
-        for (pair<int, int> swapeo: arregloDeAdyacentes) {
+        for (pair<int, int> swapeo : arregloDeAdyacentes) {
             coloreoAuxiliar = coloreo;
             hacerSwap(coloreoAuxiliar, swapeo);
             //impact se fija asi nomas el maximo impacto suponiendo que el coloreo ya es valido
@@ -273,7 +281,7 @@ void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto) {
         }
         if (!cambie) {
             ciclos_sin_mejoras++;
-            coloreo = hacerSwap(colores, arregloDeAdyacentes[0]);
+            hacerSwap(coloreo, arregloDeAdyacentes[0]);
             memoria.push_back(arregloDeAdyacentes[0]);
         } else {
             memoria.push_back(intercambio);
@@ -282,7 +290,9 @@ void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto) {
         cant_iteraciones++;
     }
     cout << mejorSol << endl;
-    cout << mejorColoreo << endl;
+    for( int elemento : mejorColoreo){cout << elemento;}
+    cout << "" <<  endl;    
+    
 
 }
 

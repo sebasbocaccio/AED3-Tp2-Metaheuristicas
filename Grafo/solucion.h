@@ -1,5 +1,5 @@
-#ifndef PRUEBASGRAFOS_SOLUCION_H
-#define PRUEBASGRAFOS_SOLUCION_H
+#ifndef SOLUCION_H
+#define SOLUCION_H
 
 
 #include <iostream>
@@ -57,11 +57,11 @@ private:
 };
 
 //GLOBAL VAR:
-int CICLOS_MAX_SIN_MEJORAS;
-int MAX_CANT_ITERACIONES;
-int CANT_INTENTOS;
-int CANT_TOPS;
-int CANT_NODOS_A_ELEJIR;
+extern int CICLOS_MAX_SIN_MEJORAS;
+extern int MAX_CANT_ITERACIONES;
+extern int CANT_INTENTOS;
+extern int CANT_TOPS;
+extern int CANT_NODOS_A_ELEJIR;
 
 
 
@@ -82,4 +82,4 @@ vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> coloreoAct
 void filtrarTabu(vector<vector<int>> tabuList, vector<pair<int, int>>& vecinos, vector<int> coloreoActual);
 vector<int> tabuSearch_allColors(grafo G, grafo H);
 
-#endif //PRUEBASGRAFOS_SOLUCION_H
+#endif //SOLUCION_H
