@@ -96,7 +96,7 @@ vector<pair<int, int>> vecindad(int n) {
 //            swaps.emplace_back(v[i], v[j]);
 //            cantIt++;
 //        }
-//    }
+//    }dsdfsdf
     while(cantIt<cota){
         int i = rand() % n;
         int j = rand() % n;
@@ -107,7 +107,7 @@ vector<pair<int, int>> vecindad(int n) {
 
     }
     return swaps;
-}
+} 
 
 bool estadoValido(grafo &G, const vector<int> &colores) {
     vector<vector<int>> listaAdyacencia = G.listaAdyacencia();
@@ -237,72 +237,106 @@ vector<pair<int, int>> generarPosiblesSwapeos(const grafo &G, const vector<int> 
     return swaps;
 }
 
-
-void tabu_search_vertices(grafo& G, grafo& H) {
-    vector<int> coloreo = heuristica_1(G, H);
-    int impacto_input = impacto(H,coloreo);
-    int n = G.cantDeNodos();
+vector<int> crear_vector_nodos(int n){
     vector<int> todos_los_nodos(n, 0);
     //lleno todos_los_nodos con la pos i = i
     for (int i = 0; i < n; i++) {
         todos_los_nodos[i] = i;
     }
-    vector<pair<int, int>> memoria;
-    int cant_iteraciones = 0;
-    int ciclos_sin_mejoras = 0;
-    int intentos = 0;
-    bool noHayOpciones = true;
-    int mejorSol = impacto_input;
-    vector<int> mejorColoreo = coloreo;
-    while (ciclos_sin_mejoras < CICLOS_MAX_SIN_MEJORAS &&
-           cant_iteraciones < MAX_CANT_ITERACIONES) {//faltaria agregar el tiempo (nosPasamosDeTiempo)
+    return todos_los_nodos;
+}
 
-        vector<int> nodos_no_visitados = todos_los_nodos;
-        //shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::mt19937(std::random_device()()));
-        intentos = 0;
-        vector<pair<int, int>> arregloDeAdyacentes;
-        while (noHayOpciones && intentos < CANT_INTENTOS) {
+vector<pair<int,int>> generarSwapeosValidos(vector<int> &nodos_no_visitados, grafo &G , vector<pair<int, int>> &memoria,vector<int> &coloreo){
+    bool noHayOpciones = true;
+    int intentos = 0;
+    vector<pair<int,int>> arregloDeAdyacentes;
+    while (noHayOpciones && intentos < CANT_INTENTOS) {
             noHayOpciones = true;
+            
             //Busco nodos a los cuales hacerles swap
             arregloDeAdyacentes = generarPosiblesSwapeos(G, nodos_no_visitados, CANT_NODOS_A_ELEJIR);
+
             //Descarto posibles swap que estan en la lista taboo o no sean validas
             quitarInvalidos(arregloDeAdyacentes, G, coloreo);//sacarInvalidas saca los coloreos invalidos
             filtrarTabu_Vertices(memoria, arregloDeAdyacentes, coloreo);
+            
             if (arregloDeAdyacentes.size() == 0) {
                 borrarElementos(nodos_no_visitados, CANT_NODOS_A_ELEJIR);
                 intentos++;
             } else
                 noHayOpciones = false;
-        }
-        //Evaluo la funcion objetivo para ver si hay mejoras o no
-        bool cambie = false;
-        vector<int> coloreoAuxiliar;
-        pair<int, int> intercambio;
-        for (pair<int, int> swapeo : arregloDeAdyacentes) {
+    }
+    return arregloDeAdyacentes;
+}
+
+
+bool cambieOptimo(vector<pair<int,int>> &swapeosValidos, grafo &H,vector<int> &coloreo,int &mejorSol, pair<int, int> &intercambio){
+
+    bool cambie = false;
+    vector<int> coloreoAuxiliar;
+    vector<int> mejorColoreo = coloreo;
+
+    for (pair<int, int> swapeo : swapeosValidos) {
             coloreoAuxiliar = coloreo;
             hacerSwap(coloreoAuxiliar, swapeo);
             //impact se fija asi nomas el maximo impacto suponiendo que el coloreo ya es valido
             int impactoAuxiliar = impacto(H, coloreoAuxiliar);
             if (impactoAuxiliar > mejorSol) {
-                pair<int, int> intercambio = swapeo;
-                mejorSol = impactoAuxiliar;
-                mejorColoreo = coloreoAuxiliar;
-                cambie = true;
+                    intercambio = swapeo;
+                    mejorSol = impactoAuxiliar;
+                    mejorColoreo = coloreoAuxiliar;
+                    cambie = true;
+                }
+    }
+    if(coloreo != mejorColoreo) 
+        coloreo = mejorColoreo;
+    
+    return cambie;
+
+}
+
+
+
+void tabu_search_vertices(grafo& G, grafo& H) {
+    vector<int> coloreo = heuristica_1(G, H);
+    int impacto_input = impacto(H,coloreo);
+    int n = G.cantDeNodos();
+        
+    vector<int> todos_los_nodos = crear_vector_nodos(n);
+    vector<pair<int, int>> memoria;
+
+
+    int cant_iteraciones = 0;
+    int ciclos_sin_mejoras = 0;
+    int mejorSol = impacto_input;
+    vector<int> mejorColoreo = coloreo;
+    while (ciclos_sin_mejoras < CICLOS_MAX_SIN_MEJORAS && cant_iteraciones < MAX_CANT_ITERACIONES) { //faltaria agregar el tiempo (nosPasamosDeTiempo)
+
+        vector<int> nodos_no_visitados = todos_los_nodos;
+        shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::mt19937(std::random_device()()));
+        
+        //Creo Swapeos, eliminando los que estan en la lista tabu y los que producen coloreos invalidos 
+        vector<pair<int,int>> swapeosValidos = generarSwapeosValidos(nodos_no_visitados,G,memoria, coloreo);
+
+        if(swapeosValidos.size() != 0){
+ 
+            //Busca el swap mas optimo posible para cambiar coloreo, si no hay uno mejor lo cambia por un intercambio cualquiera.
+            pair<int, int> intercambio;
+            if(cambieOptimo(swapeosValidos,H,coloreo,mejorSol,intercambio)){
+                memoria.push_back(intercambio);
+                ciclos_sin_mejoras = 0;
+            }
+            else{
+                ciclos_sin_mejoras++;
+                hacerSwap(coloreo, swapeosValidos[0]);
+                memoria.push_back(swapeosValidos[0]);
             }
         }
-        if (!cambie) {
-            ciclos_sin_mejoras++;
-            hacerSwap(coloreo, arregloDeAdyacentes[0]);
-            memoria.push_back(arregloDeAdyacentes[0]);
-        } else {
-            memoria.push_back(intercambio);
-            ciclos_sin_mejoras = 0;
-        }
+        else ciclos_sin_mejoras++;
+        
         cant_iteraciones++;
     }
-    cout << mejorSol << endl;
-    for( int elemento : mejorColoreo){cout << elemento;}
-    cout << "" <<  endl;    
+    printSol(mejorColoreo,H);
     
 
 }
