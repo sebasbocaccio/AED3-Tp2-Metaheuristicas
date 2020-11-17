@@ -51,8 +51,8 @@ public:
     }
 
 private:
-    int &_cantAristas;
-    int &_cantNodos;
+    int _cantAristas;
+    int _cantNodos;
     std::vector<std::vector<int>> relaciones;
 };
 
@@ -64,22 +64,22 @@ extern int CANT_TOPS;
 extern int CANT_NODOS_A_ELEJIR;
 
 
-
+void printSol(vector<int> solucion, grafo H);
 void hacerSwap(vector<int> &coloreoAuxiliar,const pair<int,int>& swapeo);
 void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar);
-vector<pair<int,int>> generarPosiblesSwapeos(const grafo& G, const vector<int> todos_los_nodos, int cant_nodos);
-void tabu_search_vertices(grafo G,grafo H,vector<int> coloreo,int impacto);
+vector<pair<int,int>> generarPosiblesSwapeos(const grafo& G, const vector<int> &todos_los_nodos, int cant_nodos);
+void tabu_search_vertices(grafo &G,grafo &H);
 
 
 int impacto(grafo H, vector<int> coloreo);
-void printSol(grafo H, vector<int> solucion);
+
 bool colorValido(grafo G, vector<int> colores, int nodo, int color);
-vector<int> heuristica_1(grafo G, grafo H);
+vector<int> heuristica_1(grafo &G, grafo &H);
 vector<pair<int, int>> vecindad(int n);
 bool estadoValido(grafo &G, const vector<int> &colores);
 void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int> &coloreoActual);
-vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> coloreoActual, grafo &H);
-void filtrarTabu(vector<vector<int>> tabuList, vector<pair<int, int>>& vecinos, vector<int> coloreoActual);
-vector<int> tabuSearch_allColors(grafo G, grafo H);
+vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> &coloreoActual, grafo &H);
+void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<pair<int, int>> &vecinos, vector<int> &coloreoActual);
+vector<int> tabuSearch_allColors(grafo &G, grafo &H);
 
 #endif //SOLUCION_H

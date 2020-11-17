@@ -1,7 +1,5 @@
 #include "solucion.h"
 
-
-
 //--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
 //--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
 //--------------------ESTO NO VA A COMPILARRR COMENTENLOOOO POR FAVOR -------------//
@@ -32,6 +30,7 @@ int main() {
     std::cin >> cant_aristas_H;
     grafo G = grafo(cant_vertices, cant_aristas_G);
     grafo H = grafo(cant_vertices, cant_aristas_H);
-    heuristica_1(G, H);
+    tabu_search_vertices(G, H);
+   // tabuSearch_allColors(G, H);
     return 0;
 }

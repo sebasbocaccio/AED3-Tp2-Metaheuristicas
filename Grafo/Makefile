@@ -1,7 +1,5 @@
 # Makefile for el tp de algo3 parte 2
 
-
-
 CC=g++ -Wall -j2 -O3 
 
 SRC_DIR=.

@@ -1,15 +1,15 @@
 
 #include "solucion.h"
 
-int CICLOS_MAX_SIN_MEJORAS;
-int MAX_CANT_ITERACIONES;
-int CANT_INTENTOS;
-int CANT_TOPS;
-int CANT_NODOS_A_ELEJIR;
+int CICLOS_MAX_SIN_MEJORAS = 1000;
+int MAX_CANT_ITERACIONES = 5000;
+int CANT_INTENTOS = 100;
+int CANT_TOPS = 3;
+int CANT_NODOS_A_ELEJIR = 3;
 
 
 
-vector<int> heuristica_1(grafo G, grafo H) {
+vector<int> heuristica_1(grafo &G, grafo &H) {
     vector<int> colores(H.cantDeNodos(), -1);    // colores de cada nodo, -1 si no esta coloreado
     vector<pair<int, int>> grados;
     // ordeno los vertices por grado
@@ -40,9 +40,7 @@ vector<int> heuristica_1(grafo G, grafo H) {
         }
     }
 
-    for (int i = 0; i < colores.size(); ++i) {
-        cout << colores[i] << ", ";
-    }
+    printSol(colores, H);
     return colores;
 
 }
@@ -67,6 +65,7 @@ void printSol(vector<int> solucion, grafo H) {
     for (int i = 0; i < solucion.size(); ++i) {
         cout << solucion[i] << ", ";
     }
+    cout << endl;
 
 }
 
@@ -85,16 +84,27 @@ bool colorValido(grafo G, vector<int> colores, int nodo, int color) {
 
 vector<pair<int, int>> vecindad(int n) {
     vector<int> v(n);
-    iota(v.begin(), v.end(), 1);
+    for (int i = 0; i < n; ++i) {
+        v[i] = i;
+    }
     vector<pair<int, int>> swaps;
     const int &cota = (int) floor((n * (n - 1) / 2) * 0.3);
     int cantIt = 0;
-    shuffle(v.begin(), v.end(), std::mt19937(std::random_device()()));
-    for (int i = 0; i < n && cantIt < cota; i++) {
-        for (int j = i + 1; j < n && cantIt < cota; ++j) {
+   // shuffle(v.begin(), v.end(), std::mt19937(std::random_device()()));
+//    for (int i = 0; i < n && cantIt < cota; i++) {
+//        for (int j = i + 1; j < n && cantIt < cota; ++j) {
+//            swaps.emplace_back(v[i], v[j]);
+//            cantIt++;
+//        }
+//    }
+    while(cantIt<cota){
+        int i = rand() % n;
+        int j = rand() % n;
+        if(i != j && count(swaps.begin(),swaps.end(), make_pair(v[i], v[j])) == 0){
             swaps.emplace_back(v[i], v[j]);
             cantIt++;
         }
+
     }
     return swaps;
 }
@@ -124,7 +134,7 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 }
 
 
-vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> coloreoActual, grafo &H) {
+vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> &coloreoActual, grafo &H) {
     vector<int> maximoActual = coloreoActual;
     int maximo = impacto(H, coloreoActual);
     for (int i = 0; i < vecinos.size(); ++i) {
@@ -140,7 +150,7 @@ vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> coloreoAct
     return maximoActual;
 }
 
-void filtrarTabu_allColors(vector<vector<int>> tabuList, vector<pair<int, int>> &vecinos, vector<int> coloreoActual) {
+void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<pair<int, int>> &vecinos, vector<int> &coloreoActual) {
     for (int i = 0; i < vecinos.size(); i++) {
         vector<int> posibleColoreo = coloreoActual;
         posibleColoreo[vecinos[i].first] = coloreoActual[vecinos[i].second];
@@ -154,7 +164,7 @@ void filtrarTabu_allColors(vector<vector<int>> tabuList, vector<pair<int, int>> 
 
 
 
-vector<int> tabuSearch_allColors(grafo G, grafo H) {
+vector<int> tabuSearch_allColors(grafo &G, grafo &H) {
     vector<vector<int>> tabuList;
     vector<int> coloreoActual = heuristica_1(G, H);
     tabuList.push_back(coloreoActual);
@@ -162,8 +172,7 @@ vector<int> tabuSearch_allColors(grafo G, grafo H) {
 //    vector<int> v(G.cantDeNodos());
 //    iota(v.begin(), v.end(), 1);
     vector<int> optimoActual = coloreoActual;
-    while (cantSinSol < 1000) {
-        //shuffle(v.begin(), v.endpai(), std::mt19937(std::random_device()()));
+    while (cantSinSol < 5000) {
         vector<pair<int, int>> vecinos = vecindad(G.cantDeNodos());
         quitarInvalidos(vecinos, G, coloreoActual);
         filtrarTabu_allColors(tabuList, vecinos, coloreoActual);
@@ -204,9 +213,9 @@ void filtrarTabu_Vertices(vector<pair<int, int>> tabuList, vector<pair<int, int>
 
 
 void hacerSwap(vector<int> &coloreoAuxiliar, const pair<int, int> &swapeo) {
-    int aux = coloreoAuxiliar[swapeo.first - 1];
-    coloreoAuxiliar[swapeo.first - 1] = coloreoAuxiliar[swapeo.second - 1];
-    coloreoAuxiliar[swapeo.second - 1] = aux;
+    int aux = coloreoAuxiliar[swapeo.first];
+    coloreoAuxiliar[swapeo.first] = coloreoAuxiliar[swapeo.second];
+    coloreoAuxiliar[swapeo.second] = aux;
 }
 
 void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar) {
@@ -216,7 +225,7 @@ void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar) {
     }
 }
 
-vector<pair<int, int>> generarPosiblesSwapeos(const grafo &G, const vector<int> todos_los_nodos, int cant_nodos) {
+vector<pair<int, int>> generarPosiblesSwapeos(const grafo &G, const vector<int> &todos_los_nodos, int cant_nodos) {
     vector<pair<int, int>> swaps;
     vector<vector<int>> adyacencias = G.listaAdyacencia();
     for (int i = 0; i < cant_nodos; i++) {
@@ -229,12 +238,14 @@ vector<pair<int, int>> generarPosiblesSwapeos(const grafo &G, const vector<int> 
 }
 
 
-void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto_input) {
+void tabu_search_vertices(grafo& G, grafo& H) {
+    vector<int> coloreo = heuristica_1(G, H);
+    int impacto_input = impacto(H,coloreo);
     int n = G.cantDeNodos();
     vector<int> todos_los_nodos(n, 0);
     //lleno todos_los_nodos con la pos i = i
     for (int i = 0; i < n; i++) {
-        todos_los_nodos[i] = i + 1;
+        todos_los_nodos[i] = i;
     }
     vector<pair<int, int>> memoria;
     int cant_iteraciones = 0;
@@ -247,7 +258,7 @@ void tabu_search_vertices(grafo G, grafo H, vector<int> coloreo, int impacto_inp
            cant_iteraciones < MAX_CANT_ITERACIONES) {//faltaria agregar el tiempo (nosPasamosDeTiempo)
 
         vector<int> nodos_no_visitados = todos_los_nodos;
-        shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::mt19937(std::random_device()()));
+        //shuffle(nodos_no_visitados.begin(), nodos_no_visitados.end(), std::mt19937(std::random_device()()));
         intentos = 0;
         vector<pair<int, int>> arregloDeAdyacentes;
         while (noHayOpciones && intentos < CANT_INTENTOS) {
