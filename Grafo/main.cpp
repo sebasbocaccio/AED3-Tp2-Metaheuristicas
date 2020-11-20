@@ -30,7 +30,14 @@ int main() {
     std::cin >> cant_aristas_H;
     grafo G = grafo(cant_vertices, cant_aristas_G);
     grafo H = grafo(cant_vertices, cant_aristas_H);
+<<<<<<< HEAD
    // tabu_search_vertices(G, H);
     tabuSearch_allColors(G, H, "swap_y_change");
+=======
+  //  heuristica_2(G,H);
+   // heuristica_1(G,H);
+   tabu_search_vertices(G, H);
+   // tabuSearch_allColors(G, H);
+>>>>>>> 3f3a282fd3e92db8f1bc353ab9fa164b7ed31dbb
     return 0;
 }

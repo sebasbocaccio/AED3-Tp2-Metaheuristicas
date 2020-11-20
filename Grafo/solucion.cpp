@@ -55,7 +55,6 @@ vector<int> heuristica_2(grafo&G,grafo &H) {
     return colores;
 }
 
-
 vector<int> heuristica_1(grafo &G, grafo &H) {
     vector<int> colores(H.cantDeNodos(), -1);    // colores de cada nodo, -1 si no esta coloreado
     vector<pair<int, int>> grados;
@@ -65,6 +64,7 @@ vector<int> heuristica_1(grafo &G, grafo &H) {
     }
     sort(grados.begin(), grados.end());
     // posible optimizacion con priorida de colores
+
     for (int i = H.cantDeNodos() - 1; i >= 0; --i) {
         if (colores[grados[i].second] == -1) {   // me fijo si i ya esta coloreado
             colores[grados[i].second] = i;
@@ -442,7 +442,6 @@ void tabu_search_vertices(grafo &G, grafo &H) {
             }
         } else ciclos_sin_mejoras++;
 
-        cant_iteraciones++;
     }
     printSol(mejorColoreo, H);
 
