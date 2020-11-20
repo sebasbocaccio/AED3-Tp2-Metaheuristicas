@@ -82,5 +82,7 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> &coloreoActual, grafo &H);
 void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<pair<int, int>> &vecinos, vector<int> &coloreoActual);
 vector<int> tabuSearch_allColors(grafo &G, grafo &H);
+vector<int> heuristica_2(grafo&G,grafo &H);
+vector<int> heuristica_1(grafo &G, grafo &H);
 
 #endif //SOLUCION_H

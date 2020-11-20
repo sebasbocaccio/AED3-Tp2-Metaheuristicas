@@ -8,6 +8,53 @@ int CANT_TOPS = 250;
 int CANT_NODOS_A_ELEJIR = 14;
 
 
+// Muy parecida a la heuristica uno, la diferencia es que no asigna color nuevo cada vez que cambia de vertice, sino que trata de reutilizar los que ya tiene.
+vector<int> heuristica_2(grafo&G,grafo &H) {
+
+    vector<int> colores(H.cantDeNodos(), -1);    // colores de cada nodo, -1 si no esta coloreado
+    vector<pair<int, int>> grados;
+    // ordeno los vertices por grado
+    for (int i = 0; i < H.cantDeNodos(); ++i) {
+        grados.push_back(make_pair(H.grado(i), i));
+    }
+    sort(grados.begin(), grados.end());
+    int colores_usados = 0;
+    for (int i = H.cantDeNodos() - 1; i >= 0; --i) {
+        if (colores[grados[i].second] == -1) {// me fijo si i ya esta coloreado
+            // Me fijo si puedo asignar un color que ya fue usado
+            int minimo_disponible = 0;
+            vector<int> listaAdyacenciaG = G.listaAdyacencia()[grados[i].second];
+
+            while (!colorValido(G, colores, grados[i].second, minimo_disponible)) {
+                minimo_disponible++;
+            }
+            // A lo sumo tengo que ponerle un color nuevo
+            colores[grados[i].second] = minimo_disponible;
+            if (minimo_disponible > colores_usados) { colores_usados++; }
+
+
+            vector<int> listaAdyacenciaH = H.listaAdyacencia()[grados[i].second];
+            // recorro los adyacentes al vertice i
+            for (int j = 0; j < listaAdyacenciaH.size(); ++j) {
+                if (colorValido(G, colores, listaAdyacenciaH[j], colores[grados[i].second])) {
+                    colores[listaAdyacenciaH[j]] = colores[grados[i].second];
+                }
+            }
+        }
+
+    }
+    // asigno colores distintos a los que quedan sin colorear
+    int colorDistinto = -2;
+    for (int i = 0; i < colores.size(); ++i) {
+        if (colores[i] == -1) {
+            colores[i] = colorDistinto;
+            colorDistinto--;
+        }
+
+    }
+    printSol(colores, H);
+    return colores;
+}
 
 vector<int> heuristica_1(grafo &G, grafo &H) {
     vector<int> colores(H.cantDeNodos(), -1);    // colores de cada nodo, -1 si no esta coloreado
@@ -18,6 +65,7 @@ vector<int> heuristica_1(grafo &G, grafo &H) {
     }
     sort(grados.begin(), grados.end());
     // posible optimizacion con priorida de colores
+
     for (int i = H.cantDeNodos() - 1; i >= 0; --i) {
         if (colores[grados[i].second] == -1) {   // me fijo si i ya esta coloreado
             colores[grados[i].second] = i;
@@ -338,7 +386,7 @@ void tabu_search_vertices(grafo& G, grafo& H) {
                 memoria.push_back(swapeosValidos[0]);
             }
         }
-        else ciclos_sin_mejoras++;
+        else ciclos_sin_mejoras++;  
         
         cant_iteraciones++;
     }
