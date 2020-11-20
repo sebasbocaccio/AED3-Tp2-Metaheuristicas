@@ -1,22 +1,3 @@
 # Makefile for el tp de algo3 parte 2
-
-CC=g++ -Wall -j2 -O3 
-
-SRC_DIR=.
-EXE_DIR=.
-
-EXES = \
-       ./main
-	
-
-${EXE_DIR}/%: %.o
-	${CC} -o $@ $< ${LIBS}
-
-%.o: ${SRC_DIR}.cpp
-	${CC} -o $@ -c $<
-
-all:    ${EXES}
-
-
-clean:
-	@rm -f ${EXES}
+all:
+	g++ -o main main.cpp solucion.cpp -O2 -std=c++14

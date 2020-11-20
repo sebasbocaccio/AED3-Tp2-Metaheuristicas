@@ -1,7 +1,7 @@
 #ifndef SOLUCION_H
 #define SOLUCION_H
 
-
+#include <string>
 #include <iostream>
 #include <list>
 #include <random>
@@ -75,12 +75,16 @@ void tabu_search_vertices(grafo &G,grafo &H);
 int impacto(grafo H, vector<int> coloreo);
 
 bool colorValido(grafo G, vector<int> colores, int nodo, int color);
+vector<int> heuristica_2(grafo&G,grafo &H);
 vector<int> heuristica_1(grafo &G, grafo &H);
-vector<pair<int, int>> vecindad(int n);
+vector<vector<int>> vecindad(int n, string criterio, int colorMaximo, int colorMinimo);
 bool estadoValido(grafo &G, const vector<int> &colores);
+void quitarInvalidos(vector<vector<int>> &vecinos, grafo &G, const vector<int> &coloreoActual);
 void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int> &coloreoActual);
-vector<int> buscarMaximo(vector<pair<int, int>> &vecinos, vector<int> &coloreoActual, grafo &H);
-void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<pair<int, int>> &vecinos, vector<int> &coloreoActual);
-vector<int> tabuSearch_allColors(grafo &G, grafo &H);
+vector<int> buscarMaximo(vector<vector<int>> &vecinos, vector<int> &coloreoActual, grafo &H);
+void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<vector<int>> &vecinos, vector<int> &coloreoActual);
+vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio);
+
+
 
 #endif //SOLUCION_H
