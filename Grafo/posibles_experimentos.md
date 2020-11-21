@@ -31,7 +31,7 @@ agarrar algunas variables de la Metaheristica y jugar con ellas. Para asi ver co
 
 ### Cual Metaheuristica es la mejor? (la nuestra obvio)
 
-Es muy dificil, a menos que una termine antes y 
+Es muy dificil, a menos que una termine antes y tenga mejor resultado,  medir cual es mejor. Podemos charlar sobre diferentes contextos y por ultimo podriamos hacer una metrica de impacto/segundos para poner una medida standard. 
 
 
 

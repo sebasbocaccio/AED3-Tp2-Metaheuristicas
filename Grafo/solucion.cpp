@@ -4,7 +4,8 @@ int CICLOS_MAX_SIN_MEJORAS = 10000;
 int MAX_CANT_ITERACIONES = 5000;
 int CANT_INTENTOS = 10000;
 int CANT_TOPS = 250;
-int CANT_NODOS_A_ELEJIR = 14;
+int CANT_NODOS_A_ELEJIR;
+float PORCENTAJE_NODOS = 0.8;
 bool hayquePrintear = true;
 
 
@@ -277,7 +278,7 @@ vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio) {
         filtrarTabu_allColors(tabuList, vecinos, coloreoActual);
         vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H);
         tabuList.push_back(maximo);
-        if (maximo >= optimoActual) {
+        if (maximo > optimoActual) {
             optimoActual = maximo;
             cantSinSol = 0;
         } else {
@@ -337,6 +338,7 @@ vector<int> crear_vector_nodos(int n) {
 
 vector<pair<int, int>> generarSwapeosValidos(vector<int> &nodos_no_visitados, grafo &G, vector<pair<int, int>> &memoria,
                                              vector<int> &coloreo) {
+                                      
     bool noHayOpciones = true;
     int intentos = 0;
     vector<pair<int, int>> arregloDeAdyacentes;
@@ -402,9 +404,13 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 
 void tabu_search_vertices(grafo &G, grafo &H) {
 
+    //Temas burocatricos
     noPrintear_Heuristica();
+    CANT_NODOS_A_ELEJIR = (int) (G.cantDeNodos() * PORCENTAJE_NODOS);
+     
 
-    vector<int> coloreo = heuristica_1(G, H);
+
+    vector<int> coloreo = heuristica_2(G, H);
     int impacto_input = impacto(H, coloreo);
     int n = G.cantDeNodos();
 
