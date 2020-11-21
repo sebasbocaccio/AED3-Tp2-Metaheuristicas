@@ -30,7 +30,6 @@ public:
         int src;
         int dst;
         relaciones = std::vector<std::vector<int>>(_cantNodos);
-        std::cout << "Vaya ingresandolas de forma v1 v2 e" << std::endl;
         for (int i = 0; i < aristas; i++) {
             std::cin >> src >> dst;
             relaciones[src - 1].push_back(dst - 1);
@@ -64,7 +63,7 @@ extern int CANT_INTENTOS;
 extern int CANT_TOPS;
 extern int CANT_NODOS_A_ELEJIR;
 
-
+void noPrintear_Heuristica();
 void printSol(vector<int> solucion, grafo H);
 void hacerSwap(vector<int> &coloreoAuxiliar,const pair<int,int>& swapeo);
 void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar);

@@ -5,8 +5,12 @@ int MAX_CANT_ITERACIONES = 5000;
 int CANT_INTENTOS = 10000;
 int CANT_TOPS = 250;
 int CANT_NODOS_A_ELEJIR = 14;
+bool hayquePrintear = true;
 
 
+void noPrintear_Heuristica(){
+    hayquePrintear = false;
+}
 // Muy parecida a la heuristica uno, la diferencia es que no asigna color nuevo cada vez que cambia de vertice, sino que trata de reutilizar los que ya tiene.
 vector<int> heuristica_2(grafo&G,grafo &H) {
 
@@ -51,7 +55,7 @@ vector<int> heuristica_2(grafo&G,grafo &H) {
         }
 
     }
-    printSol(colores, H);
+    if(hayquePrintear) printSol(colores, H);
     return colores;
 }
 
@@ -87,7 +91,7 @@ vector<int> heuristica_1(grafo &G, grafo &H) {
         }
     }
 
-    printSol(colores, H);
+    if(hayquePrintear) printSol(colores, H);
     return colores;
 
 }
@@ -108,11 +112,11 @@ int impacto(grafo H, vector<int> coloreo) {
 
 
 void printSol(vector<int> solucion, grafo H) {
-    cout << impacto(H, solucion) << endl;
+    cout << impacto(H, solucion) ;
     for (int i = 0; i < solucion.size(); ++i) {
-        cout << solucion[i] << ", ";
+        cout << " " << solucion[i];
     }
-    cout << endl;
+ 
 
 }
 
@@ -252,6 +256,9 @@ void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<vector<int>> &v
 // tipo change [0, nodo, color]
 // tipo swap [1, nodo1, nodo2]
 vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio) {
+    
+    noPrintear_Heuristica();
+
     vector<vector<int>> tabuList;
     vector<int> coloreoActual = heuristica_1(G, H);
     tabuList.push_back(coloreoActual);
@@ -291,16 +298,6 @@ void filtrarTabu_Vertices(vector<pair<int, int>> tabuList, vector<pair<int, int>
         }
     }
 }
-
-
-
-
-// lo de luki y sebi----------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
 
 void hacerSwap(vector<int> &coloreoAuxiliar, const pair<int, int> &swapeo) {
     int aux = coloreoAuxiliar[swapeo.first];
@@ -404,6 +401,9 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 
 
 void tabu_search_vertices(grafo &G, grafo &H) {
+
+    noPrintear_Heuristica();
+
     vector<int> coloreo = heuristica_1(G, H);
     int impacto_input = impacto(H, coloreo);
     int n = G.cantDeNodos();
