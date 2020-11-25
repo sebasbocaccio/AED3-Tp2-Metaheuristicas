@@ -80,7 +80,7 @@ vector<vector<int>> vecindad(int n, string criterio, int colorMaximo, int colorM
 bool estadoValido(grafo &G, const vector<int> &colores);
 void quitarInvalidos(vector<vector<int>> &vecinos, grafo &G, const vector<int> &coloreoActual);
 void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int> &coloreoActual);
-vector<int> buscarMaximo(vector<vector<int>> &vecinos, vector<int> &coloreoActual, grafo &H);
+vector<int> buscarMaximo(vector<vector<int>> &vecinos, vector<int> &coloreoActual, grafo &H, string modo);
 void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<vector<int>> &vecinos, vector<int> &coloreoActual);
 vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio);
 
