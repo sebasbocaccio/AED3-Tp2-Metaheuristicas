@@ -193,20 +193,26 @@ bool estadoValido(grafo &G, const vector<int> &colores) {
 }
 
 void quitarInvalidos(vector<vector<int>> &vecinos, grafo &G, const vector<int> &coloreoActual) {
-    for (int i = 0; i < vecinos.size(); i++) {
+    auto it = vecinos.begin();
+    while(it != vecinos.end()) {
         vector<int> posibleColoreo = coloreoActual;
-        if (vecinos[i][0] == 1) {
-            posibleColoreo[vecinos[i][1]] = coloreoActual[vecinos[i][2]];
-            posibleColoreo[vecinos[i][2]] = coloreoActual[vecinos[i][1]];
+        if ((*it)[0] == 1) {
+            posibleColoreo[(*it)[1]] = coloreoActual[(*it)[2]];
+            posibleColoreo[(*it)[2]] = coloreoActual[(*it)[1]];
             if (!estadoValido(G, posibleColoreo)) {
-                vecinos.erase(vecinos.begin() + i);
+                it = vecinos.erase(it);
+            } else {
+                it++;
             }
-        } else if (vecinos[i][0] == 0) {
-            posibleColoreo[vecinos[i][1]] = vecinos[i][2];
+        } else if ((*it)[0] == 0) {
+            posibleColoreo[(*it)[1]] = (*it)[2];
             if (!estadoValido(G, posibleColoreo)) {
-                vecinos.erase(vecinos.begin() + i);
+                it = vecinos.erase(it);
+            } else{
+                it++;
             }
         }
+
     }
 }
 
@@ -284,7 +290,7 @@ vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio) {
     vector<int> optimoActual = coloreoActual;
     int cantItRandom = 0;
     string modo = "random";
-    while (cantSinSol < 10000 || cantItRandom < 1000) {
+    while (cantSinSol < 5000 || cantItRandom < 1000) {
         if (cantItRandom == 1000) {
             modo = "max";
         }
