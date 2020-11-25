@@ -68,7 +68,7 @@ vector<int> heuristica_1(grafo &G, grafo &H) {
     for (int i = 0; i < H.cantDeNodos(); ++i) {
         grados.push_back(make_pair(H.grado(i), i));
     }
-    sort(grados.begin(), grados.end());
+    sort(grados.begin(), grados.end()); 
     // posible optimizacion con priorida de colores
 
     for (int i = H.cantDeNodos() - 1; i >= 0; --i) {
