@@ -277,12 +277,16 @@ void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<vector<int>> &v
 
 // tipo change [0, nodo, color]
 // tipo swap [1, nodo1, nodo2]
-vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio) {
+vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio, int heuristica) {
 
     noPrintear_Heuristica();
-
+    vector<int> coloreoActual;
     vector<vector<int>> tabuList;
-    vector<int> coloreoActual = heuristica_1(G, H);
+    if(heuristica == 1){
+        coloreoActual = heuristica_1(G, H);
+    } else if(heuristica == 2) {
+        coloreoActual = heuristica_2(G, H);
+    }
   //  tabuList.push_back(coloreoActual); se repite la primera solucion
     int cantSinSol = 0;
 //    vector<int> v(G.cantDeNodos());
@@ -299,20 +303,26 @@ vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio) {
         vector<vector<int>> vecinos = vecindad(G.cantDeNodos(), criterio, colorMax, colorMin);
         quitarInvalidos(vecinos, G, coloreoActual);
         filtrarTabu_allColors(tabuList, vecinos, coloreoActual);
-        vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H, modo);
-        tabuList.push_back(maximo);
-        if (impacto(H,maximo) > impacto(H,optimoActual)) {
-            optimoActual = maximo;
-            cantSinSol = 0;
-        }
-        else {
+        if(!vecinos.empty()) {
+            vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H, modo);
+            tabuList.push_back(maximo);
+
+            if (impacto(H,maximo) > impacto(H,optimoActual)) {
+                optimoActual = maximo;
+                cantSinSol = 0;
+            }
+            else {
+                cantSinSol++;
+            }
+            coloreoActual = maximo;
+        } else{
             cantSinSol++;
         }
-        coloreoActual = maximo;
+
         cantItRandom++;
     }
     printSol(optimoActual, H);
-    cout << endl << boolalpha << estadoValido(G,optimoActual);
+    // cout << endl << boolalpha << estadoValido(G,optimoActual);
     return optimoActual;
 }
 
