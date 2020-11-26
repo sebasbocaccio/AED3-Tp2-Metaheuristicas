@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     std::map<string, string> algoritmos_implementados = {
             {"H1", "Heuristica 1 "}, {"H2", "Heuristica 2"}, {"M1S", "Metaheuristica colores swap "},{"M1SC", "Metaheuristica colores swap_y_change"}, 
             {"M1SCH2", "Metaheuristica colores swap_y_change con su segunda Heuristica"},
-            {"M1C", "Metaheuristica colores change"}, {"M2", "Metaheuristica por vertices"}
+            {"M1C", "Metaheuristica colores change"},{"M22", "Metaheuristica por vertices con heuristica_2"}, {"M21", "Metaheuristica por vertices con heuristica_1"}
     };
   	// Verificar que el algoritmo pedido exista.
     if (argc < 2 || algoritmos_implementados.find(argv[1]) == algoritmos_implementados.end())
@@ -55,12 +55,16 @@ int main(int argc, char** argv) {
        
         tabuSearch_allColors(G, H, "change", 1);
     }
-    else if (algoritmo == "M2")
+    else if (algoritmo == "M21")
     {
        
-        tabu_search_vertices(G,H);
+        tabu_search_vertices(G,H,1);
     }
-
+    else if (algoritmo == "M22")
+    {
+       
+        tabu_search_vertices(G,H,2);
+    }
     auto end = chrono::steady_clock::now();
     double total_time = chrono::duration<double, milli>(end - start).count();
     clog << total_time << endl;

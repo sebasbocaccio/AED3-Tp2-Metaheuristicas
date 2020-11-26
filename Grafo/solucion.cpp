@@ -442,14 +442,18 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 }
 
 
-void tabu_search_vertices(grafo &G, grafo &H) {
+void tabu_search_vertices(grafo &G, grafo &H, int heuristica) {
 
     //Temas burocatricos
     noPrintear_Heuristica();
     CANT_NODOS_A_ELEJIR = (int) (G.cantDeNodos() * PORCENTAJE_NODOS);
 
-
-    vector<int> coloreo = heuristica_2(G, H);
+    vector<int> coloreo;
+    if(heuristica == 1){
+        coloreo = heuristica_1(G, H);
+    } else if(heuristica == 2) {
+        coloreo = heuristica_2(G, H);
+    }
     int impacto_input = impacto(H, coloreo);
     int n = G.cantDeNodos();
 

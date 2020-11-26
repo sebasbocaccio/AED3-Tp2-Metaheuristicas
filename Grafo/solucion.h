@@ -68,7 +68,7 @@ void printSol(vector<int> solucion, grafo H);
 void hacerSwap(vector<int> &coloreoAuxiliar,const pair<int,int>& swapeo);
 void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar);
 vector<pair<int,int>> generarPosiblesSwapeos(const grafo& G, const vector<int> &todos_los_nodos, int cant_nodos);
-void tabu_search_vertices(grafo &G,grafo &H);
+void tabu_search_vertices(grafo &G,grafo &H, int heuristica);
 
 
 int impacto(grafo H, vector<int> coloreo);
