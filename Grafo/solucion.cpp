@@ -9,11 +9,12 @@ float PORCENTAJE_NODOS = 0.8;
 bool hayquePrintear = true;
 
 
-void noPrintear_Heuristica(){
+void noPrintear_Heuristica() {
     hayquePrintear = false;
 }
+
 // Muy parecida a la heuristica uno, la diferencia es que no asigna color nuevo cada vez que cambia de vertice, sino que trata de reutilizar los que ya tiene.
-vector<int> heuristica_2(grafo&G,grafo &H) {
+vector<int> heuristica_2(grafo &G, grafo &H) {
 
     vector<int> colores(H.cantDeNodos(), -1);    // colores de cada nodo, -1 si no esta coloreado
     vector<pair<int, int>> grados;
@@ -56,7 +57,7 @@ vector<int> heuristica_2(grafo&G,grafo &H) {
         }
 
     }
-    if(hayquePrintear) printSol(colores, H);
+    if (hayquePrintear) printSol(colores, H);
     return colores;
 }
 
@@ -92,7 +93,7 @@ vector<int> heuristica_1(grafo &G, grafo &H) {
         }
     }
 
-    if(hayquePrintear) printSol(colores, H);
+    if (hayquePrintear) printSol(colores, H);
     return colores;
 
 }
@@ -113,11 +114,11 @@ int impacto(grafo H, vector<int> coloreo) {
 
 
 void printSol(vector<int> solucion, grafo H) {
-    cout << impacto(H, solucion) ;
+    cout << impacto(H, solucion);
     for (int i = 0; i < solucion.size(); ++i) {
         cout << " " << solucion[i];
     }
- 
+
 
 }
 
@@ -160,16 +161,16 @@ vector<vector<int>> vecindad(int n, string criterio, int colorMaximo, int colorM
     cantIt = 0;
     if (criterio == "change" || criterio == "swap_y_change") {
         while (cantIt < cota) {
-            int newColor = rand() % ((colorMaximo - colorMinimo) * 2);
+            int newColor = rand() % (colorMaximo * 2);
             vector<int> newChange;
-            if (newColor > (colorMaximo - colorMinimo)) {
+            if (newColor > colorMaximo) {
                 newChange.insert(newChange.end(), {0, rand() % n, colorMaximo + 1});
                 if (count(vecinos.begin(), vecinos.end(), newChange) == 0) {
                     vecinos.push_back(newChange);
                     cantIt++;
                 }
             } else {
-                newChange.insert(newChange.end(), {0, rand() % n, newColor + colorMinimo});
+                newChange.insert(newChange.end(), {0, rand() % n, newColor});
                 vecinos.push_back(newChange);
                 cantIt++;
             }
@@ -192,47 +193,67 @@ bool estadoValido(grafo &G, const vector<int> &colores) {
 }
 
 void quitarInvalidos(vector<vector<int>> &vecinos, grafo &G, const vector<int> &coloreoActual) {
-    for (int i = 0; i < vecinos.size(); i++) {
+    auto it = vecinos.begin();
+    while(it != vecinos.end()) {
         vector<int> posibleColoreo = coloreoActual;
-        if (vecinos[i][0] == 1) {
-            posibleColoreo[vecinos[i][1]] = coloreoActual[vecinos[i][2]];
-            posibleColoreo[vecinos[i][2]] = coloreoActual[vecinos[i][1]];
+        if ((*it)[0] == 1) {
+            posibleColoreo[(*it)[1]] = coloreoActual[(*it)[2]];
+            posibleColoreo[(*it)[2]] = coloreoActual[(*it)[1]];
             if (!estadoValido(G, posibleColoreo)) {
-                vecinos.erase(vecinos.begin() + i);
+                it = vecinos.erase(it);
+            } else {
+                it++;
             }
-        } else if (vecinos[i][0] == 0) {
-            posibleColoreo[vecinos[i][1]] = vecinos[i][2];
+        } else if ((*it)[0] == 0) {
+            posibleColoreo[(*it)[1]] = (*it)[2];
             if (!estadoValido(G, posibleColoreo)) {
-                vecinos.erase(vecinos.begin() + i);
+                it = vecinos.erase(it);
+            } else{
+                it++;
             }
         }
+
     }
 }
 
-//tincho se la come
-vector<int> buscarMaximo(vector<vector<int>> &vecinos, vector<int> &coloreoActual, grafo &H) {
-    vector<int> maximoActual = coloreoActual;
-    int maximo = impacto(H, coloreoActual);
-    for (int i = 0; i < vecinos.size(); ++i) {
+
+
+vector<int> buscarMaximo(vector<vector<int>> &vecinos, vector<int> &coloreoActual, grafo &H, string modo) {
+    if (modo == "random") {
         vector<int> posibleColoreo = coloreoActual;
-        if (vecinos[i][0] == 1) {
-            posibleColoreo[vecinos[i][1]] = coloreoActual[vecinos[i][2]];
-            posibleColoreo[vecinos[i][2]] = coloreoActual[vecinos[i][1]];
-            int impactoActual = impacto(H, posibleColoreo);
-            if (maximo <= impactoActual) {
-                maximo = impactoActual;
-                maximoActual = posibleColoreo;
-            }
-        } else if (vecinos[i][0] == 0) {
-            posibleColoreo[vecinos[i][1]] = vecinos[i][2];
-            int impactoActual = impacto(H, posibleColoreo);
-            if (maximo <= impactoActual) {
-                maximo = impactoActual;
-                maximoActual = posibleColoreo;
+        int random = rand() % vecinos.size();
+        if (vecinos[random][0] == 1) {
+            posibleColoreo[vecinos[random][1]] = coloreoActual[vecinos[random][2]];
+            posibleColoreo[vecinos[random][2]] = coloreoActual[vecinos[random][1]];
+        } else if (vecinos[random][0] == 0) {
+            posibleColoreo[vecinos[random][1]] = vecinos[random][2];
+        }
+        return posibleColoreo;
+    } else {
+        vector<int> maximoActual = coloreoActual;
+        int maximo = impacto(H, coloreoActual);
+
+        for (int i = 0; i < vecinos.size(); ++i) {
+            vector<int> posibleColoreo = coloreoActual;
+            if (vecinos[i][0] == 1) {
+                posibleColoreo[vecinos[i][1]] = coloreoActual[vecinos[i][2]];
+                posibleColoreo[vecinos[i][2]] = coloreoActual[vecinos[i][1]];
+                int impactoActual = impacto(H, posibleColoreo);
+                if (maximo <= impactoActual) {
+                    maximo = impactoActual;
+                    maximoActual = posibleColoreo;
+                }
+            } else if (vecinos[i][0] == 0) {
+                posibleColoreo[vecinos[i][1]] = vecinos[i][2];
+                int impactoActual = impacto(H, posibleColoreo);
+                if (maximo <= impactoActual) {
+                    maximo = impactoActual;
+                    maximoActual = posibleColoreo;
+                }
             }
         }
+        return maximoActual;
     }
-    return maximoActual;
 }
 
 
@@ -257,35 +278,41 @@ void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<vector<int>> &v
 // tipo change [0, nodo, color]
 // tipo swap [1, nodo1, nodo2]
 vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio) {
-    
+
     noPrintear_Heuristica();
 
     vector<vector<int>> tabuList;
     vector<int> coloreoActual = heuristica_1(G, H);
-    tabuList.push_back(coloreoActual);
+  //  tabuList.push_back(coloreoActual); se repite la primera solucion
     int cantSinSol = 0;
 //    vector<int> v(G.cantDeNodos());
 //    iota(v.begin(), v.end(), 1);
     vector<int> optimoActual = coloreoActual;
-    while (cantSinSol < 1000) {
-        int colorMax = *max_element(optimoActual.begin(), optimoActual.end());
-        int colorMin = *min_element(optimoActual.begin(), optimoActual.end());
-        if (colorMin < 0){
-            colorMin = 0;
+    int cantItRandom = 0;
+    string modo = "random";
+    while (cantSinSol < 5000 || cantItRandom < 1000) {
+        if (cantItRandom == 1000) {
+            modo = "max";
         }
+        int colorMax = *max_element(coloreoActual.begin(), coloreoActual.end());
+        int colorMin = *min_element(coloreoActual.begin(), coloreoActual.end());
         vector<vector<int>> vecinos = vecindad(G.cantDeNodos(), criterio, colorMax, colorMin);
         quitarInvalidos(vecinos, G, coloreoActual);
         filtrarTabu_allColors(tabuList, vecinos, coloreoActual);
-        vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H);
+        vector<int> maximo = buscarMaximo(vecinos, coloreoActual, H, modo);
         tabuList.push_back(maximo);
-        if (maximo > optimoActual) {
+        if (impacto(H,maximo) > impacto(H,optimoActual)) {
             optimoActual = maximo;
             cantSinSol = 0;
-        } else {
+        }
+        else {
             cantSinSol++;
         }
+        coloreoActual = maximo;
+        cantItRandom++;
     }
     printSol(optimoActual, H);
+    cout << endl << boolalpha << estadoValido(G,optimoActual);
     return optimoActual;
 }
 
@@ -338,7 +365,7 @@ vector<int> crear_vector_nodos(int n) {
 
 vector<pair<int, int>> generarSwapeosValidos(vector<int> &nodos_no_visitados, grafo &G, vector<pair<int, int>> &memoria,
                                              vector<int> &coloreo) {
-                                      
+
     bool noHayOpciones = true;
     int intentos = 0;
     vector<pair<int, int>> arregloDeAdyacentes;
@@ -401,13 +428,11 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 }
 
 
-
 void tabu_search_vertices(grafo &G, grafo &H) {
 
     //Temas burocatricos
     noPrintear_Heuristica();
     CANT_NODOS_A_ELEJIR = (int) (G.cantDeNodos() * PORCENTAJE_NODOS);
-     
 
 
     vector<int> coloreo = heuristica_2(G, H);
