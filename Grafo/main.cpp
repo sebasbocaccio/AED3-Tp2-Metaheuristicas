@@ -15,7 +15,8 @@ int main(int argc, char** argv) {
     grafo H = grafo(cant_vertices, cant_aristas_H);
 
     std::map<string, string> algoritmos_implementados = {
-            {"H1", "Heuristica 1 "}, {"H2", "Heuristica 2"}, {"M1S", "Metaheuristica colores swap "},{"M1SC", "Metaheuristica colores swap_y_change"},
+            {"H1", "Heuristica 1 "}, {"H2", "Heuristica 2"}, {"M1S", "Metaheuristica colores swap "},{"M1SC", "Metaheuristica colores swap_y_change"}, 
+            {"M1SCH2", "Metaheuristica colores swap_y_change con su segunda Heuristica"},
             {"M1C", "Metaheuristica colores change"}, {"M2", "Metaheuristica por vertices"}
     };
   	// Verificar que el algoritmo pedido exista.
@@ -39,17 +40,20 @@ int main(int argc, char** argv) {
     }
     else if (algoritmo == "M1S")
     {
-        tabuSearch_allColors(G, H, "swap");
+        tabuSearch_allColors(G, H, "swap", 1);
     }
     else if (algoritmo == "M1SC")
     {
-        
-        tabuSearch_allColors(G, H, "swap_y_change");
+        tabuSearch_allColors(G, H, "swap_y_change", 1);
+    }
+    else if (algoritmo == "M1SCH2")
+    {
+        tabuSearch_allColors(G, H, "swap_y_change", 2);
     }
     else if (algoritmo == "M1C")
     {
        
-        tabuSearch_allColors(G, H, "change");
+        tabuSearch_allColors(G, H, "change", 1);
     }
     else if (algoritmo == "M2")
     {
