@@ -1,8 +1,8 @@
 #include "solucion.h"
 
-int CICLOS_MAX_SIN_MEJORAS = 10000;
+int CICLOS_MAX_SIN_MEJORAS = 1000;
 int MAX_CANT_ITERACIONES = 5000;
-int CANT_INTENTOS = 10000;
+int CANT_INTENTOS = 100;
 int CANT_TOPS = 250;
 int CANT_NODOS_A_ELEJIR;
 float PORCENTAJE_NODOS = 0.8;
@@ -344,7 +344,7 @@ void hacerSwap(vector<int> &coloreoAuxiliar, const pair<int, int> &swapeo) {
 }
 
 void borrarElementos(vector<int> &nodos_no_visitados, int cant_a_borrar) {
-    while (cant_a_borrar > 0) {
+    while (cant_a_borrar > 0 && !nodos_no_visitados.empty()) {
         nodos_no_visitados.erase(nodos_no_visitados.begin()); //Borro el primer elemento
         cant_a_borrar--;
     }
@@ -400,7 +400,7 @@ vector<pair<int, int>> generarSwapeosValidos(vector<int> &nodos_no_visitados, gr
 
 
 bool cambieOptimo(vector<pair<int, int>> &swapeosValidos, grafo &H, vector<int> &coloreo, int &mejorSol,
-                  pair<int, int> &intercambio) {
+                  pair<int, int> &intercambio, grafo &G ) {
 
     bool cambie = false;
     vector<int> coloreoAuxiliar;
@@ -408,15 +408,17 @@ bool cambieOptimo(vector<pair<int, int>> &swapeosValidos, grafo &H, vector<int> 
 
     for (pair<int, int> swapeo : swapeosValidos) {
         coloreoAuxiliar = coloreo;
-        hacerSwap(coloreoAuxiliar, swapeo);
-        //impact se fija asi nomas el maximo impacto suponiendo que el coloreo ya es valido
-        int impactoAuxiliar = impacto(H, coloreoAuxiliar);
-        if (impactoAuxiliar > mejorSol) {
-            intercambio = swapeo;
-            mejorSol = impactoAuxiliar;
-            mejorColoreo = coloreoAuxiliar;
-            cambie = true;
-        }
+            hacerSwap(coloreoAuxiliar, swapeo);
+            if(estadoValido(G,coloreoAuxiliar)) {
+                //impact se fija asi nomas el maximo impacto suponiendo que el coloreo ya es valido
+                int impactoAuxiliar = impacto(H, coloreoAuxiliar);
+                if (impactoAuxiliar > mejorSol) {
+                    intercambio = swapeo;
+                    mejorSol = impactoAuxiliar;
+                    mejorColoreo = coloreoAuxiliar;
+                    cambie = true;
+                }
+            }
     }
     if (coloreo != mejorColoreo)
         coloreo = mejorColoreo;
@@ -426,14 +428,16 @@ bool cambieOptimo(vector<pair<int, int>> &swapeosValidos, grafo &H, vector<int> 
 }
 
 void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int> &coloreoActual) {
-    for (int i = 0; i < vecinos.size(); i++) {
+    auto it = vecinos.begin();
+    while(it != vecinos.end()) {
         vector<int> posibleColoreo = coloreoActual;
 
-        posibleColoreo[vecinos[i].first] = coloreoActual[vecinos[i].second];
-        posibleColoreo[vecinos[i].second] = coloreoActual[vecinos[i].first];
+        posibleColoreo[(*it).first] = coloreoActual[(*it).second] ;
+        posibleColoreo[(*it).second] = coloreoActual[(*it).first];
         if (!estadoValido(G, posibleColoreo)) {
-            vecinos.erase(vecinos.begin() + i);
+            it = vecinos.erase(it);
         }
+        else it++;
     }
 }
 
@@ -472,17 +476,17 @@ void tabu_search_vertices(grafo &G, grafo &H) {
 
             //Busca el swap mas optimo posible para cambiar coloreo. Si no hay uno mejor, lo cambia por un intercambio cualquiera.
             pair<int, int> intercambio;
-            if (cambieOptimo(swapeosValidos, H, coloreo, mejorSol, intercambio)) {
+            if (cambieOptimo(swapeosValidos, H, coloreo, mejorSol, intercambio,G)) {
                 mejorColoreo = coloreo;
                 memoria.push_back(intercambio);
                 ciclos_sin_mejoras = 0;
             } else {
                 ciclos_sin_mejoras++;
-                hacerSwap(coloreo, swapeosValidos[0]);
-                memoria.push_back(swapeosValidos[0]);
+                //hacerSwap(coloreo, swapeosValidos[0]);
+                //memoria.push_back(swapeosValidos[0]);
             }
         } else ciclos_sin_mejoras++;
-
+        cant_iteraciones++;
     }
     printSol(mejorColoreo, H);
 
