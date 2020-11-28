@@ -141,7 +141,7 @@ vector<vector<int>> vecindad(int n, string criterio, int colorMaximo, int colorM
         v[i] = i;
     }
     vector<vector<int>> vecinos;
-    int cota = (int) floor((n * (n - 1) / 2) * 0.30);
+    int cota = (int) floor((n * (n - 1) / 2) * PORCENTAJE_NODOS);
     if (criterio == "swap_y_change") {
         cota /= 2;
     }
@@ -277,9 +277,10 @@ void filtrarTabu_allColors(vector<vector<int>> &tabuList, vector<vector<int>> &v
 
 // tipo change [0, nodo, color]
 // tipo swap [1, nodo1, nodo2]
-vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio, int heuristica) {
-
-    noPrintear_Heuristica();
+vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio, int heuristica, float porcentajeNodos, int interacionesSinMejoras) {
+    PORCENTAJE_NODOS = porcentajeNodos;
+    CICLOS_MAX_SIN_MEJORAS = interacionesSinMejoras; //variables con las que vamos a experimentar
+    noPrintear_Heuristica();    //es para que no se printeen los valores que den las heurisiticas
     vector<int> coloreoActual;
     vector<vector<int>> tabuList;
     if(heuristica == 1){
@@ -287,14 +288,12 @@ vector<int> tabuSearch_allColors(grafo &G, grafo &H, string criterio, int heuris
     } else if(heuristica == 2) {
         coloreoActual = heuristica_2(G, H);
     }
-  //  tabuList.push_back(coloreoActual); se repite la primera solucion
     int cantSinSol = 0;
-//    vector<int> v(G.cantDeNodos());
-//    iota(v.begin(), v.end(), 1);
     vector<int> optimoActual = coloreoActual;
     int cantItRandom = 0;
     string modo = "random";
-    while (cantSinSol < 5000 || cantItRandom < 1000) {
+    
+    while (cantSinSol < CICLOS_MAX_SIN_MEJORAS || cantItRandom < 1000) {
         if (cantItRandom == 1000) {
             modo = "max";
         }
@@ -442,8 +441,9 @@ void quitarInvalidos(vector<pair<int, int>> &vecinos, grafo &G, const vector<int
 }
 
 
-void tabu_search_vertices(grafo &G, grafo &H, int heuristica) {
-
+void tabu_search_vertices(grafo &G, grafo &H, int heuristica, float porcentajeNodos, int interacionesSinMejoras){
+    PORCENTAJE_NODOS = porcentajeNodos;
+    CICLOS_MAX_SIN_MEJORAS = interacionesSinMejoras; //variables con las que vamos a experimentar
     //Temas burocatricos
     noPrintear_Heuristica();
     CANT_NODOS_A_ELEJIR = (int) (G.cantDeNodos() * PORCENTAJE_NODOS);

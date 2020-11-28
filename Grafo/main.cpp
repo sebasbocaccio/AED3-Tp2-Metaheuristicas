@@ -40,30 +40,36 @@ int main(int argc, char** argv) {
     }
     else if (algoritmo == "M1S")
     {
-        tabuSearch_allColors(G, H, "swap", 1);
+        tabuSearch_allColors(G, H, "swap", 1, 0.3, 5000);
     }
     else if (algoritmo == "M1SC")
     {
-        tabuSearch_allColors(G, H, "swap_y_change", 1);
+        if(argc > 3)
+            tabuSearch_allColors(G, H, "swap_y_change", 1, stof(argv[2]), stoi(argv[3]));
+        else
+            tabuSearch_allColors(G, H, "swap_y_change", 1, 0.3, 5000);
     }
     else if (algoritmo == "M1SCH2")
     {
-        tabuSearch_allColors(G, H, "swap_y_change", 2);
+        tabuSearch_allColors(G, H, "swap_y_change", 2, 0.3, 5000);
     }
     else if (algoritmo == "M1C")
     {
        
-        tabuSearch_allColors(G, H, "change", 1);
+        tabuSearch_allColors(G, H, "change", 1, 0.3, 5000);
     }
     else if (algoritmo == "M21")
     {
        
-        tabu_search_vertices(G,H,1);
+        tabu_search_vertices(G,H,1, 0.8, 1000);
     }
     else if (algoritmo == "M22")
     {
-       
-        tabu_search_vertices(G,H,2);
+        if(argc > 3)
+            tabu_search_vertices(G, H, 2, stof(argv[2]), stoi(argv[3]));
+        else
+            tabu_search_vertices(G, H, 2, 0.8, 1000);   
+        
     }
     auto end = chrono::steady_clock::now();
     double total_time = chrono::duration<double, milli>(end - start).count();

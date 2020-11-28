@@ -35,4 +35,23 @@ Es muy dificil, a menos que una termine antes y tenga mejor resultado,  medir cu
 
 
 
+## cosas que faltan terminar en el informe:
 
+
+1. explicacion que falta de la metaheursitica_1
+
+2. complejidades de ambas metaheurisitcas
+
+3. plotear el experimento 4 y ecribirlo en el informe
+
+4. instancias nuevas de baja, media y alta densidad
+
+5. escribir correr, plotear las nuevas instancias
+
+6. pasar el experimento de las intancias al informe
+
+7. ejemplos de aplicacion del problema
+
+8. concluciones
+
+9. instancias peor caso de las heuristicas.
