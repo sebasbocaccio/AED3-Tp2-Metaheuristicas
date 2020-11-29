@@ -51,7 +51,10 @@ int main(int argc, char** argv) {
     }
     else if (algoritmo == "M1SCH2")
     {
-        tabuSearch_allColors(G, H, "swap_y_change", 2, 0.3, 5000);
+        if(argc > 3)
+            tabuSearch_allColors(G, H, "swap_y_change", 2, stof(argv[2]), stoi(argv[3]));
+        else
+            tabuSearch_allColors(G, H, "swap_y_change", 2, 0.3, 5000);
     }
     else if (algoritmo == "M1C")
     {
